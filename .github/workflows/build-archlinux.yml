@@ -93,8 +93,12 @@ jobs:
           gh release download "kernel-bundle-${KERNEL_VER}" \
             --repo "${{ github.repository }}" --clobber || true
           
-          echo "⬇️ 正在下载 Debian Mesa dev 包..."
-          wget -q -O mesa-common-dev_26.0.7-1_arm64.deb "http://ftp.br.debian.org/debian/pool/main/m/mesa/mesa-common-dev_26.0.8-1_arm64.deb"
+          echo "🔎 正在获取最新 Mesa 包版本..."
+          POOL_URL="http://ftp.br.debian.org/debian/pool/main/m/mesa/"
+          LATEST_DEB=$(curl -s $POOL_URL | grep -oE 'mesa-common-dev_[^"]+_arm64\.deb' | sort -V | tail -n 1)
+
+          echo "⬇️ 正在下载最新版本: $LATEST_DEB"
+          wget -q -O "$LATEST_DEB" "${POOL_URL}${LATEST_DEB}"
           
           echo "📥 下载的文件列表:"
           ls -la
